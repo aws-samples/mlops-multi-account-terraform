@@ -1,4 +1,4 @@
-# Base Infrasturcure 
+# Base Infrastructure 
 
 This repository defines the infrastructure to setup your MLOps platform. 
 
@@ -51,7 +51,7 @@ This repository defines the infrastructure to setup your MLOps platform.
 
 - Ensure the contents of this folder has been move to a stand-alone git repository.
 
-- Ensure the following Github template repos are avaialble in your Github organization:
+- Ensure the following Github template repos are available in your Github organization:
   1. sagemaker-mlops-terraform-byoc-template
   2. sagemaker-mlops-terraform-deploy-rt-template
   3. sagemaker-mlops-terraform-workflow
@@ -76,7 +76,7 @@ The base infrastructure will deploy:
 
 1. AWS Role Name
 
-In previous steps, you bootsrapped your AWS accounts, depoying an AWS IAM role that can be assumed by GitHub actions. If you did not customize the role name, this should be `aws-github-oidc-role`.
+In previous steps, you bootstrapped your AWS accounts, deploying an AWS IAM role that can be assumed by GitHub actions. If you did not customize the role name, this should be `aws-github-oidc-role`.
 
 Create a new [Secret in this GitHub repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) under the name `AWS_ASSUME_ROLE_NAME` and set its value to the role name.
 
@@ -139,15 +139,15 @@ There are three [GitHub Actions Workflows](https://docs.github.com/en/actions/qu
 
 1. "Deploy infrastructure" in `deploy.yml`
 
-This action is trigerred when a commit is made to the `main` branch (for example when a pull request is merged). It deploys base infrastructure to all dev, preprod, and prod accounts across business units in parallel.
+This action is triggered when a commit is made to the `main` branch (for example when a pull request is merged). It deploys base infrastructure to all dev, preprod, and prod accounts across business units in parallel.
 
 2. "Destroy infrastructure" in `destroy.yml`
 
-This action is only trigerred manually on [workflow_dispatch](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows). It destroys all base-infrastructure for target business units. Note Machine Learning code deployed via SageMaker project is _durable_ and will continue to live even after you destroy base-infrastructure. 
+This action is only triggered manually on [workflow_dispatch](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows). It destroys all base-infrastructure for target business units. Note Machine Learning code deployed via SageMaker project is _durable_ and will continue to live even after you destroy base-infrastructure. 
 
 3. "Quality Checks" in `quality-checks.yml``
 
-This action is trigerred each time a pull request is created to merge changes into the `main` branch. All checks on the pull request should pass before merging changes.
+This action is triggered each time a pull request is created to merge changes into the `main` branch. All checks on the pull request should pass before merging changes.
 
 The checks include static checking using [checkov](https://github.com/bridgecrewio/checkov) and a `terraform plan` step against the target accounts.
 
