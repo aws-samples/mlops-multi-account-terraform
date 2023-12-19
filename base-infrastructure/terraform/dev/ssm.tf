@@ -29,7 +29,7 @@ resource "aws_ssm_parameter" "github_organization" {
   description = "Name github organization"
   type        = "String"
   overwrite   = true
-  value       = "sagemaker-mlops-terraform"
+  value       = var.github_organization
 }
 
 resource "aws_ssm_parameter" "github_build_repo_template" {
@@ -71,6 +71,14 @@ resource "aws_ssm_parameter" "github_workflow_repo_template" {
   type        = "String"
   overwrite   = true
   value       = "pipeline-promotion"
+}
+
+resource "aws_ssm_parameter" "github_llm_repo_template" {
+  name        = "github_llm_repo_template"
+  description = "Template repository name for llm training"
+  type        = "String"
+  overwrite   = true
+  value       = "llm-training"
 }
 
 

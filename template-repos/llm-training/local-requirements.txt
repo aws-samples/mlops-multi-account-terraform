@@ -1,0 +1,9 @@
+scikit-learn
+xgboost==1.7.1
+s3fs==0.4.2
+sagemaker
+pandas
+gevent
+geventhttpclient
+Markdown
+fmeval

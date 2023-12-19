@@ -1,0 +1,51 @@
+name: Seedjob that runs Sagemaker Pipeline for training LLM models
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+env:
+  ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  SAGEMAKER_PIPELINE_ROLE_ARN: ${{ vars.SAGEMAKER_PIPELINE_ROLE_ARN }}
+  SAGEMAKER_PROJECT_ARN: ${{ vars.SAGEMAKER_PROJECT_ARN }}
+  SAGEMAKER_PROJECT_ID: ${{ vars.SAGEMAKER_PROJECT_ID }}
+  SAGEMAKER_PROJECT_NAME_ID: ${{ vars.SAGEMAKER_PROJECT_NAME_ID }}
+  SAGEMAKER_PROJECT_NAME: ${{ vars.SAGEMAKER_PROJECT_NAME }}
+  AWS_DEV_ACCOUNT_NUMBER: ${{ secrets.AWS_DEV_ACCOUNT_NUMBER }}
+  DEV_ACCOUNT_ROLE: ${{ secrets.AWS_ASSUME_ROLE_DEV}}
+  PIPELINE_TYPE: ${{ vars.PIPELINE_TYPE }}
+  PIPELINE: ${{ vars.PIPELINE }}
+  PIPELINE_CONFIG: ${{ vars.PIPELINE_CONFIG }}
+jobs:
+  sagemaker-pipeline:
+    name: Update and run ML Pipeline
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+
+      - name: Get Env Variables
+        run: env
+
+      - name: Assume AWS Dev Account Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_DEV_ACCOUNT_NUMBER }}:role/aws-github-oidc-role
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Install requirements
+        run: |
+          pip3 install --upgrade awscliv2 pyyaml
+          pip3 install -r local-requirements.txt
+      - name: Upload S3 files
+        run: |
+          python3 upload_datasets.py --output-bucket $ARTIFACT_BUCKET --role $SAGEMAKER_PIPELINE_ROLE_ARN --pipeline $PIPELINE_TYPE
+      - name: Deploy sagemaker pipeline
+        run: |
+          cd $PIPELINE_TYPE
+          python3 $PIPELINE --config $PIPELINE_CONFIG --role $SAGEMAKER_PIPELINE_ROLE_ARN --input-data-path "s3://${ARTIFACT_BUCKET}/llm-evaluation-at-scale-example"
+
+          echo "Create/Update of the SageMaker Pipeline and execution completed."

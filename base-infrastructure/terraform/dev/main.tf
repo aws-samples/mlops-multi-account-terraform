@@ -81,6 +81,11 @@ module "service_catalog" {
       name : "MLOps template for workflow promotion",
       file : "sagemaker_project_workflow",
       description : "Use this template to automate the model building workflow. Process data, extract features, train and test models, and register them in the model registry. The template provisions a GitHub repository for checking in and managing code versions. You can customize the seed code and the configuration files to suit your requirements."
+    },
+    template4 = {
+      name : "MLOps template for LLM training and evaluation",
+      file : "sagemaker_project_llm_train",
+      description : "Use this template to train and evaluate LLM. It creates a pipeline implementations that automates different steps of an evaluation process such as data preprocess, model deploy, model evaluation, best model selection, resources cleanup."
     }
   }
 

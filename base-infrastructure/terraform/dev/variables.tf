@@ -27,4 +27,7 @@ variable "pat_github" {
   sensitive   = true
 }
 
-
+variable "github_organization" {
+  description = "Name Github Organization"
+  type        = string
+}
