@@ -41,7 +41,7 @@ Currently, four example project template are available.
 
 3. **MLOps Template for Model Building and Training**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup.
 
-4. **MLOps Template for LLM Model Building, Training and Evaluating**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup for LLM models.
+4. **MLOps Template for LLM Model Building, Training and Evaluation**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup for LLM models.
 
 Based on the selected project and its setting, SageMaker projects clones GitHub repos using templates. It also sets the secrets, environment vairables, and deployment environments.
 
