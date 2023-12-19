@@ -1,6 +1,6 @@
-# Base Infrastructure 
+# Base Infrasturcure
 
-This repository defines the infrastructure to setup your MLOps platform. 
+This repository defines the infrastructure to setup your MLOps platform.
 
 ```
 .
@@ -32,6 +32,7 @@ This repository defines the infrastructure to setup your MLOps platform.
     │   │   └── layers
     │   │       └── python_github_layer.zip
     │   ├── sagemaker_templates
+    │   │   ├── sagemaker_project_llm_train.yaml    
     │   │   ├── sagemaker_project_train.yaml
     │   │   ├── sagemaker_project_train_and_deploy.yaml
     │   │   └── sagemaker_project_workflow.yaml
@@ -51,16 +52,17 @@ This repository defines the infrastructure to setup your MLOps platform.
 
 - Ensure the contents of this folder has been move to a stand-alone git repository.
 
-- Ensure the following Github template repos are available in your Github organization:
-  1. sagemaker-mlops-terraform-byoc-template
-  2. sagemaker-mlops-terraform-deploy-rt-template
-  3. sagemaker-mlops-terraform-workflow
-  4. sagemaker-mlops-terraform-deploy-batch-template 
-  5. sagemaker-mlops-terraform-training-template
+- Ensure the following Github template repos are avaialble in your Github organization:
+  1. model-training
+  2. model-deployment-realtime
+  3. model-deployment-batch
+  4. container-build
+  5. pipeline-promotion
+  6. llm-training
 
 ## Get Started
 
-Get started by setting up your first dev, preprod, and prod environments on AWS accounts. 
+Get started by setting up your first dev, preprod, and prod environments on AWS accounts.
 
 ### 1. What gets deployed:
 
@@ -76,7 +78,7 @@ The base infrastructure will deploy:
 
 1. AWS Role Name
 
-In previous steps, you bootstrapped your AWS accounts, deploying an AWS IAM role that can be assumed by GitHub actions. If you did not customize the role name, this should be `aws-github-oidc-role`.
+In previous steps, you bootsrapped your AWS accounts, depoying an AWS IAM role that can be assumed by GitHub actions. If you did not customize the role name, this should be `aws-github-oidc-role`.
 
 Create a new [Secret in this GitHub repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) under the name `AWS_ASSUME_ROLE_NAME` and set its value to the role name.
 
@@ -84,7 +86,7 @@ Create a new [Secret in this GitHub repository](https://docs.github.com/en/actio
 
 2. GitHub PAT
 
-To automatically create clones of template repos when a sagemaker project is deployed, we need to save and maintain GitHub credentials safely on AWS. This is done for you in this repository using AWS Secrets manager. 
+To automatically create clones of template repos when a sagemaker project is deployed, we need to save and maintain GitHub credentials safely on AWS. This is done for you in this repository using AWS Secrets manager.
 
 Create another secret under the name `PAT_GITHUB`.
 
@@ -120,16 +122,16 @@ Then, update the workflows with a list of your business units:
 ```
 strategy:
       matrix:
-        business_unit: ["my_business_unit"] 
+        business_unit: ["my_business_unit"]
 ```
 
 > **_NOTE:_**: This needs to be done 3 times in each of the files, one for each job (TF Apply to Dev, TF Apply to PreProd, TF Apply to Prod).
 
 3. (Optional) Overwrites
 
-The [config.json](config.json) file can also be used in order to overwrite tfvars variables during run time. 
+The [config.json](config.json) file can also be used in order to overwrite tfvars variables during run time.
 
-You can also at this point change any tfvars locally in [account_config](terraform/account_config) 
+You can also at this point change any tfvars locally in [account_config](terraform/account_config) and add your Github Organization name where the templeates are created as variable.
 
 **If you have succesfully made these changes and pushed your code to the main branch, the `Deploy infrastructure` Github action should start running. Make sure the action is succesful and infrastructure is deployed. More details about the CICD workflow on this repository in covered in the next section.**
 
@@ -139,20 +141,20 @@ There are three [GitHub Actions Workflows](https://docs.github.com/en/actions/qu
 
 1. "Deploy infrastructure" in `deploy.yml`
 
-This action is triggered when a commit is made to the `main` branch (for example when a pull request is merged). It deploys base infrastructure to all dev, preprod, and prod accounts across business units in parallel.
+This action is trigerred when a commit is made to the `main` branch (for example when a pull request is merged). It deploys base infrastructure to all dev, preprod, and prod accounts across business units in parallel.
 
 2. "Destroy infrastructure" in `destroy.yml`
 
-This action is only triggered manually on [workflow_dispatch](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows). It destroys all base-infrastructure for target business units. Note Machine Learning code deployed via SageMaker project is _durable_ and will continue to live even after you destroy base-infrastructure. 
+This action is only trigerred manually on [workflow_dispatch](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows). It destroys all base-infrastructure for target business units. Note Machine Learning code deployed via SageMaker project is _durable_ and will continue to live even after you destroy base-infrastructure.
 
 3. "Quality Checks" in `quality-checks.yml``
 
-This action is triggered each time a pull request is created to merge changes into the `main` branch. All checks on the pull request should pass before merging changes.
+This action is trigerred each time a pull request is created to merge changes into the `main` branch. All checks on the pull request should pass before merging changes.
 
 The checks include static checking using [checkov](https://github.com/bridgecrewio/checkov) and a `terraform plan` step against the target accounts.
 
 ## Importing Networking
-We create the necessary networking components in our Base Infrastructure, however you may have your own existing networking that you would like to deploy. Here is how you do it: 
+We create the necessary networking components in our Base Infrastructure, however you may have your own existing networking that you would like to deploy. Here is how you do it:
 1. Comment out the networking module from all necessary environments in the main.tf, e.g. for dev: [main.tf](terraform/dev/main.tf)
 2. In modules, create a new folder e.g. "imported_networking". Here you can import your resources using the "data" source. For the application to work, make sure the list of outputs is the same (found in [outputs.tf](terraform/modules/networking/outputs.tf)) & make sure the list of ssm parameters is the same (found in [ssm.tf](terraform/modules/networking/ssm.tf))
 3. In the main.tf of each relevant environment, create a new module definition, calling your newly created module, like so:
@@ -160,8 +162,8 @@ We create the necessary networking components in our Base Infrastructure, howeve
 module "networking" {
   source = "../modules/imported_networking" // your module folder name
   // any vars you need to import
-} 
+}
 ```
 ## Deploy you first project
 
-You are now ready to launch SageMaker Studio environment and launch your first SageMaker project! 
+You are now ready to launch SageMaker Studio environment and launch your first SageMaker project!

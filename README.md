@@ -33,13 +33,15 @@ An architecture for the `Building, training, and deployment` project is shown be
 
 <img src="./architecture/user-exp.png" alt="drawing" width="700"/>
 
-Currently, three example project template are available.
+Currently, four example project template are available.
 
 1. **MLOps Template for Model Building, Training, and Deployment**: ML Ops pattern to train models using SageMaker pipelines and to deploy the trained model into preproduction and production accounts. This template supports Real-time inference, Batch Inference Pipeline, and BYOC containers.
 
 2. **MLOps Template for promoting the full ML pipeline across environments**: ML Ops pattern to shows how to take the same SageMaker pipeline across environements from dev to prod.
 
 3. **MLOps Template for Model Building and Training**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup.
+
+4. **MLOps Template for LLM Model Building, Training and Evaluating**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup for LLM models.
 
 Based on the selected project and its setting, SageMaker projects clones GitHub repos using templates. It also sets the secrets, environment vairables, and deployment environments.
 
