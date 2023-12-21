@@ -47,6 +47,20 @@ if __name__ == "__main__":
         default="",
         help="The Sagemaker execution role",
     )
+    parser.add_argument(
+        "-project-name",
+        "--project-name",
+        dest="project_name",
+        default="",
+        help="The Sagemaker project name",
+    )
+    parser.add_argument(
+        "-project-id",
+        "--project-id",
+        dest="project_id",
+        default="",
+        help="The Sagemaker project id",
+    )
     args = parser.parse_args()
 
     # Initialize configuration for data, model, and algorithm
@@ -62,7 +76,9 @@ if __name__ == "__main__":
     pipeline_name = config["pipeline"]["name"]
     dataset_config = config["dataset"]  # Get dataset configuration
     input_data_path = args.input_data_path + "/" + dataset_config["input_data_location"]
-    output_data_path = args.input_data_path + "/output_" + pipeline_name + "_" + evaluation_exec_id
+    output_data_path = (
+        args.input_data_path + "/output_" + pipeline_name + "_" + evaluation_exec_id
+    )
 
     print("Data input location:", input_data_path)
     print("Data output location:", output_data_path)
@@ -71,7 +87,9 @@ if __name__ == "__main__":
     model_registry_config = config["model_registry"]
 
     # Construct the steps
-    preprocess_step_ret = step(preprocess, name="preprocess")(input_data_path, output_data_path)
+    preprocess_step_ret = step(preprocess, name="preprocess")(
+        input_data_path, output_data_path
+    )
     # Import the models from config
     models = import_models(config)
 
@@ -83,9 +101,13 @@ if __name__ == "__main__":
         model.config["output_data_path"] = output_data_path
 
         if is_finetuning(model):
-            model.config["finetuning_config"]["training_job_name"] = create_training_job_name(model)
+            model.config["finetuning_config"][
+                "training_job_name"
+            ] = create_training_job_name(model)
             model.config["finetuning_config"]["train_data_path"] = (
-                args.input_data_path + "/" + model.config["finetuning_config"]["train_data_path"]
+                args.input_data_path
+                + "/"
+                + model.config["finetuning_config"]["train_data_path"]
             )
             model.config["finetuning_config"]["validation_data_path"] = (
                 args.input_data_path
@@ -102,7 +124,9 @@ if __name__ == "__main__":
                 model.deploy_finetuned_step, name=get_step_name("deploy", model)
             )(model, finetune_step_ret)
         else:
-            deploy_step_ret = step(model.deploy_step, name=get_step_name("deploy", model))(model)
+            deploy_step_ret = step(
+                model.deploy_step, name=get_step_name("deploy", model)
+            )(model)
 
         evaluation_step_ret = step(
             evaluation,
@@ -137,7 +161,9 @@ if __name__ == "__main__":
     pipeline_ret_list = []
     for model in models:
         if model.config["cleanup_endpoint"]:
-            cleanup_step_ret = step(model.cleanup_step, name=get_step_name("cleanup", model))(model)
+            cleanup_step_ret = step(
+                model.cleanup_step, name=get_step_name("cleanup", model)
+            )(model)
             get_step(cleanup_step_ret).add_depends_on([model_registry_ret])
             pipeline_ret_list.append(cleanup_step_ret)
 
@@ -147,9 +173,13 @@ if __name__ == "__main__":
     # Define the Sagemaker Pipeline
     pipeline = Pipeline(name=pipeline_name, steps=pipeline_ret_list)
 
+    all_tags = [
+        {"Key": "sagemaker:project-name", "Value": args.project_name},
+        {"Key": "sagemaker:project-id", "Value": args.project_id},
+    ]
     # Build and run the Sagemaker Pipeline
     if args.role == "":
-        pipeline.upsert(role_arn=sagemaker.get_execution_role())
+        pipeline.upsert(role_arn=sagemaker.get_execution_role(), tags=all_tags)
     else:
-        pipeline.upsert(role_arn=args.role)
+        pipeline.upsert(role_arn=args.role, tags=all_tags)
     pipeline.start()

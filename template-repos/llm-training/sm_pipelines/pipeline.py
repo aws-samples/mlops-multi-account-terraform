@@ -45,6 +45,20 @@ if __name__ == "__main__":
         default="",
         help="The Sagemaker execution role",
     )
+    parser.add_argument(
+        "-project-name",
+        "--project-name",
+        dest="project_name",
+        default="",
+        help="The Sagemaker project name",
+    )
+    parser.add_argument(
+        "-project-id",
+        "--project-id",
+        dest="project_id",
+        default="",
+        help="The Sagemaker project id",
+    )
     args = parser.parse_args()
 
     # Initialize configuration for data, model, and algorithm
@@ -57,7 +71,9 @@ if __name__ == "__main__":
     pipeline_name = config["pipeline"]["name"]
     dataset_config = config["dataset"]  # Get dataset configuration
     input_data_path = args.input_data_path + "/" + dataset_config["input_data_location"]
-    output_data_path = args.input_data_path + "/output_" + pipeline_name + "_" + evalaution_exec_id
+    output_data_path = (
+        args.input_data_path + "/output_" + pipeline_name + "_" + evalaution_exec_id
+    )
 
     print("Data input location:", input_data_path)
     print("Data output location:", output_data_path)
@@ -75,7 +91,9 @@ if __name__ == "__main__":
     deploy_num_instances = model_deploy_config["num_instances"]
 
     # Construct the steps
-    processed_data_path = step(preprocess, name="preprocess")(input_data_path, output_data_path)
+    processed_data_path = step(preprocess, name="preprocess")(
+        input_data_path, output_data_path
+    )
 
     endpoint_name = step(deploy, name=f"deploy_{model_id}")(
         model_id,
@@ -113,10 +131,13 @@ if __name__ == "__main__":
         name=pipeline_name,
         steps=[last_pipeline_step],
     )
-
+    all_tags = [
+        {"Key": "sagemaker:project-name", "Value": args.project_name},
+        {"Key": "sagemaker:project-id", "Value": args.project_id},
+    ]
     # Build and run the Sagemaker Pipeline
     if args.role == "":
-        pipeline.upsert(role_arn=sagemaker.get_execution_role())
+        pipeline.upsert(role_arn=sagemaker.get_execution_role(), tags=all_tags)
     else:
-        pipeline.upsert(role_arn=args.role)
+        pipeline.upsert(role_arn=args.role, tags=all_tags)
     pipeline.start()

@@ -49,6 +49,21 @@ if __name__ == "__main__":
         default="",
         help="The Sagemaker execution role",
     )
+    parser.add_argument(
+        "-project-name",
+        "--project-name",
+        dest="project_name",
+        default="",
+        help="The Sagemaker project name",
+    )
+    parser.add_argument(
+        "-project-id",
+        "--project-id",
+        dest="project_id",
+        default="",
+        help="The Sagemaker project id",
+    )
+
     args = parser.parse_args()
 
     # Initialize configuration for data, model, and algorithm
@@ -63,7 +78,9 @@ if __name__ == "__main__":
     pipeline_name = config["pipeline"]["name"]
     dataset_config = config["dataset"]  # Get dataset configuration
     input_data_path = args.input_data_path + "/" + dataset_config["input_data_location"]
-    output_data_path = args.input_data_path + "/output_" + pipeline_name + "_" + evaluation_exec_id
+    output_data_path = (
+        args.input_data_path + "/output_" + pipeline_name + "_" + evaluation_exec_id
+    )
 
     print("Data input location:", input_data_path)
     print("Data output location:", output_data_path)
@@ -71,7 +88,9 @@ if __name__ == "__main__":
     algorithms_config = config["algorithms"]  # Get algorithms configuration
 
     # Construct the steps
-    processed_data_path = step(preprocess, name="preprocess")(input_data_path, output_data_path)
+    processed_data_path = step(preprocess, name="preprocess")(
+        input_data_path, output_data_path
+    )
 
     evaluation_results_all = []
 
@@ -91,15 +110,25 @@ if __name__ == "__main__":
                 args.input_data_path + "/" + model_fine_tuning_config["train_data_path"]
             )
             validation_data_path = (
-                args.input_data_path + "/" + model_fine_tuning_config["validation_data_path"]
+                args.input_data_path
+                + "/"
+                + model_fine_tuning_config["validation_data_path"]
             )
 
-            instruction_tuned = model_fine_tuning_config["parameters"]["instruction_tuned"]
+            instruction_tuned = model_fine_tuning_config["parameters"][
+                "instruction_tuned"
+            ]
             chat_dataset = model_fine_tuning_config["parameters"]["chat_dataset"]
             epoch = model_fine_tuning_config["parameters"]["epoch"]
-            max_input_length = model_fine_tuning_config["parameters"]["max_input_length"]
-            finetune_instance_type = model_fine_tuning_config["parameters"]["instance_type"]
-            finetune_num_instances = model_fine_tuning_config["parameters"]["num_instances"]
+            max_input_length = model_fine_tuning_config["parameters"][
+                "max_input_length"
+            ]
+            finetune_instance_type = model_fine_tuning_config["parameters"][
+                "instance_type"
+            ]
+            finetune_num_instances = model_fine_tuning_config["parameters"][
+                "num_instances"
+            ]
 
             training_job_name = step(
                 finetune, name=f"finetune_{model_id}", keep_alive_period_in_seconds=2400
@@ -161,7 +190,9 @@ if __name__ == "__main__":
         if model_config["cleanup_endpoint"]:
             model_id = model_config["model_id"]
             endpoint_name = model_config["endpoint_name"]
-            cleanup_step = step(cleanup, name=f"cleanup_{model_id}")(model_id, endpoint_name)
+            cleanup_step = step(cleanup, name=f"cleanup_{model_id}")(
+                model_id, endpoint_name
+            )
             get_step(cleanup_step).add_depends_on([model_package_arn])
             last_pipeline_step.append(cleanup_step)
 
@@ -174,9 +205,13 @@ if __name__ == "__main__":
         steps=last_pipeline_step,
     )
 
+    all_tags = [
+        {"Key": "sagemaker:project-name", "Value": args.project_name},
+        {"Key": "sagemaker:project-id", "Value": args.project_id},
+    ]
     # Build and run the Sagemaker Pipeline
     if args.role == "":
-        pipeline.upsert(role_arn=sagemaker.get_execution_role())
+        pipeline.upsert(role_arn=sagemaker.get_execution_role(), tags=all_tags)
     else:
-        pipeline.upsert(role_arn=args.role)
+        pipeline.upsert(role_arn=args.role, tags=all_tags)
     pipeline.start()
