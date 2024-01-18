@@ -58,7 +58,7 @@ resource "aws_ssm_parameter" "github_deploy_batch_repo_template" {
 }
 
 resource "aws_ssm_parameter" "github_byoc_repo_template" {
-  name        = "github_container_repo_template"
+  name        = "github_byoc_repo_template"
   description = "Template repository name for deploying inference in batch"
   type        = "String"
   overwrite   = true

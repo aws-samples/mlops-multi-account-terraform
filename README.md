@@ -10,7 +10,7 @@ In this repository, we show how to use **Terraform** with **GitHub and GitHub Ac
 
 **Base Infrastructure**
 
-The necessary infrastructure componenets for your accounts including SageMaker Studio, Networking, Permissions and SSM Parameters.
+The necessary infrastructure components for your accounts including SageMaker Studio, Networking, Permissions and SSM Parameters.
 
 <img src="./architecture/base-infra.png" alt="drawing" width="500"/>
 
@@ -37,7 +37,7 @@ Currently, four example project template are available.
 
 1. **MLOps Template for Model Building, Training, and Deployment**: ML Ops pattern to train models using SageMaker pipelines and to deploy the trained model into preproduction and production accounts. This template supports Real-time inference, Batch Inference Pipeline, and BYOC containers.
 
-2. **MLOps Template for promoting the full ML pipeline across environments**: ML Ops pattern to shows how to take the same SageMaker pipeline across environements from dev to prod.
+2. **MLOps Template for promoting the full ML pipeline across environments**: ML Ops pattern to shows how to take the same SageMaker pipeline across environments from dev to prod.
 
 3. **MLOps Template for Model Building and Training**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup.
 
@@ -51,7 +51,7 @@ Based on the selected project and its setting, SageMaker projects clones GitHub 
 
 The instructions here assume the following prerequisites. Make a note of these details to use in following sections.
 
-1. AWS Account(s) with sufficient permissions to deploy base infrasturcure. We recommended using at least three AWS accounts for a Dev, Preprod, and Prod envrionment for one business-unit. However, you can deploy the infrastructure using one account for testing purposes.
+1. AWS Account(s) with sufficient permissions to deploy base infrastructure. We recommended using at least three AWS accounts for a Dev, Preprod, and Prod environment for one business-unit. However, you can deploy the infrastructure using one account for testing purposes.
 2. A GitHub Organization.
 3. Personal Access Token (PAT) for GitHub organization. It is recommended to create a service/platform account and use it's PAT.
 
@@ -93,23 +93,23 @@ Deploy the provided `bootstrap.yaml` CloudFormation template in your account(s) 
 2. Identify the following:
   a. Environment Type of the account: `dev`, `preprod`, or `prod`
   b. Name of your GitHub Organization
-  c. (Optional) Customize S3 buckect name for Terraform state files by chosing a prefix.
+  c. (Optional) Customize S3 bucket name for Terraform state files by choosing a prefix.
   d. (Optional) Customize DynamoDB Table Name for State Locking.
 
 3. Run the following command updating the details from step 2.
 
 ```bash
 # Update
-export $ENV=xxx
-export $GITHUB_ORG=xxx
+export ENV=xxx
+export GITHUB_ORG=xxx
 # Optional
-export $TerraformStateBucketPrefix=terraform-state
-export $TerraformStateLockTableName=terraform-state-locks
-
+export TerraformStateBucketPrefix=terraform-state
+export TerraformStateLockTableName=terraform-state-locks
 
 aws cloudformation create-stack \
   --stack-name YourStackName \
-  --template-body ./bootstrap.yaml \
+  --template-body file://bootstrap.yaml \
+  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
   --parameters ParameterKey=Environment,ParameterValue=$ENV \
                ParameterKey=GitHubOrg,ParameterValue=$GITHUB_ORG \
                ParameterKey=OIDCProviderArn,ParameterValue="" \
@@ -121,10 +121,10 @@ aws cloudformation create-stack \
 
 This one-time deployment create the following resources in your AWS account:
 
-- For Terrafrom Backend:
+- For Terraform Backend:
   - S3 Bucket to store state files.
   -  DynamoDB table to store state locking.
-- AWS Idenitity provider for GitHub actions using OIDC (as explained above)
+- AWS Identity provider for GitHub actions using OIDC (as explained above)
 - IAM Role to assume from GitHub Actions using the identity provider.
 
 Once this is deployed, you're ready to move on to the next step.
@@ -141,7 +141,7 @@ We will move the code from this example to your GitHub Organization.
 
 ## You are now ready!
 
-Follow the [instructions in the base-infra reposotry](./base-infrastructure/README.md) to deploy MLOps infrastructure to your bootestrapped AWS accounts.
+Follow the [instructions in the base-infra repository](./base-infrastructure/README.md) to deploy MLOps infrastructure to your bootstrapped AWS accounts.
 
 ## Contacts
 
