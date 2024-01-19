@@ -503,6 +503,7 @@ data "aws_iam_policy_document" "sagemaker_launch_service_catalog" {
     actions = [
       "events:PutTargets",
       "lambda:AddPermission",
+      "lambda:RemovePermission",
       "events:ListTargetsByRule"
 
     ]

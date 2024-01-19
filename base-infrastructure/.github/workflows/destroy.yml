@@ -43,7 +43,7 @@ jobs:
           make tf-destroy env=dev \
           bucket=terraform-state-dev-${{ env.AWS_REGION }}-${{ env.AWS_DEV_ACCOUNT_NUMBER }} \
           region=${{ env.AWS_REGION }} \
-          key=${{ env.S3_PREFIX }}-dev.state \
+          key=mlops-terraform-dev.state \
           table=${{ env.DYNAMODB_PREFIX }}-dev \
           preprod=${{ env.AWS_PREPROD_ACCOUNT_NUMBER }} \
           prod=${{ env.AWS_PROD_ACCOUNT_NUMBER }} \
@@ -82,7 +82,7 @@ jobs:
           make tf-destroy env=preprod \
           bucket=terraform-state-preprod-${{ env.AWS_REGION }}-${{ env.AWS_PREPROD_ACCOUNT_NUMBER }} \
           region=${{ env.AWS_REGION }} \
-          key=${{ env.S3_PREFIX }}-preprod.state \
+          key=mlops-terraform-preprod.state \
           table=${{ env.DYNAMODB_PREFIX }}-preprod \
           preprod=${{ env.AWS_PREPROD_ACCOUNT_NUMBER }} \
           prod=${{ env.AWS_PROD_ACCOUNT_NUMBER }} \
@@ -121,7 +121,7 @@ jobs:
           make tf-destroy env=prod \
           bucket=terraform-state-prod-${{ env.AWS_REGION }}-${{ env.AWS_PROD_ACCOUNT_NUMBER }} \
           region=${{ env.AWS_REGION }} \
-          key=${{ env.S3_PREFIX }}-prod.state \
+          key=mlops-terraform-prod.state \
           table=${{ env.DYNAMODB_PREFIX }}-prod \
           preprod=${{ env.AWS_PREPROD_ACCOUNT_NUMBER }} \
           prod=${{ env.AWS_PROD_ACCOUNT_NUMBER }} \
