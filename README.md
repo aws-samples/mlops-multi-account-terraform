@@ -149,6 +149,6 @@ If you have any comments or questions, please contact:
 
 The team who created the repo:
 
-- Jordan Grubb <jmgrubb@amazon.co.uk>
+- Jordan Grubb <jmgrubb@amazon.co.uk> 
 - Anirudh Gangwal <angangwa@amazon.co.uk>
 - Irene Arroyo Delgado <iiarroyo@amazon.es>
