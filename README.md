@@ -2,11 +2,11 @@
 
 ## Introduction
 
-As enterprise businesses embrace Machine Learning (ML) across their organisations, manual workflows for building, training, and deploying ML models tend to become bottlenecks to innovation. To overcome this, enterprises needs to shape a clear operating model defining how multiple personas, such as Data Scientists, Data Engineers, ML Engineers, IT, and Business stakeholders, should collaborate and interact, how to separate the concerns, responsibilities and skills, and how to leverage AWS services optimally. This combination of ML and Operations, so-called MLOps, is helping companies streamline their end-to-end ML lifecycle and boost productivity of data scientists while maintaining high model accuracy and enhancing security and compliance.
+As enterprise businesses embrace Machine Learning (ML) across their organisations, manual workflows for building, training, and deploying ML models tend to become bottlenecks to innovation. To overcome this, enterprises need to shape a clear operating model defining how multiple personas, such as Data Scientists, Data Engineers, ML Engineers, IT, and Business stakeholders, should collaborate and interact, how to separate the concerns, responsibilities and skills, and how to leverage AWS services optimally. This combination of ML and Operations, so-called MLOps, is helping companies streamline their end-to-end ML lifecycle and boost productivity of data scientists while maintaining high model accuracy and enhancing security and compliance.
 
 ## High level architecture
 
-In this repository, we show how to use **Terraform** with **GitHub and GitHub Actions** to build a baseline infratsturcture for secure MLOps. The solution can be broken down into three parts:
+In this repository, we show how to use **Terraform** with **GitHub and GitHub Actions** to build a baseline infrastructure for secure MLOps. The solution can be broken down into three parts:
 
 **Base Infrastructure**
 
@@ -26,7 +26,7 @@ This is how the end-users (Data Scientists or ML Engineers) use SageMaker projec
 
 Typically, when a SageMaker project is deployed:
 - GitHub private repos are created from templates that Data Scientists need to customize as per their use-case.
-- These tempalates show best practices such as testing, approvals, and dashboards. They can be fully customized once deployed.
+- These variables show best practices such as testing, approvals, and dashboards. They can be fully customized once deployed.
 - Depending on the chosen SageMaker project, other project specific resources might also be created such as a dedicated S3 bucket for the project and automation to trigger ML deployment from model registry.
 
 An architecture for the `Building, training, and deployment` project is shown below.
@@ -43,7 +43,7 @@ Currently, four example project template are available.
 
 4. **MLOps Template for LLM Model Building, Training and Evaluation**: MLOps pattern that shows a simple one-account SageMaker Pipeline setup for LLM models.
 
-Based on the selected project and its setting, SageMaker projects clones GitHub repos using templates. It also sets the secrets, environment vairables, and deployment environments.
+Based on the selected project and its setting, SageMaker projects clones GitHub repos using templates. It also sets the secrets, environment variables, and deployment environments.
 
 <img src="./architecture/project-list.png" alt="drawing" width="700"/>
 
@@ -86,7 +86,7 @@ A [bootstrap.yaml](bootstrap.yaml) CloudFormation template has been provided. Th
 
 You can get started with one account but we recommend creating at least 3 AWS accounts: a dev, preprod, and prod account.
 
-Deploy the provided `bootstrap.yaml` CloudFormation template in your account(s) either using the AWS console or using aws cli as shown below, from the root of the repo.
+Deploy the provided `bootstrap.yaml` CloudFormation template in your account(s) either using the AWS console or using AWS CLI as shown below, from the root of the repo.
 
 1. Ensure AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [credentials are loaded](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for the target account that you want to bootstrap.
 
@@ -119,7 +119,7 @@ aws cloudformation create-stack \
 
 > **_NOTE:_**: if you change the TerraformStateBucketPrefix or TerraformStateLockTableName parameters, you must update the environment variables (`S3_PREFIX`, `DYNAMODB_PREFIX`) in the [deploy.yml](base-infrastructure/.github/workflows/deploy.yml) to match.
 
-This one-time deployment create the following resources in your AWS account:
+This one-time deployment creates the following resources in your AWS account:
 
 - For Terraform Backend:
   - S3 Bucket to store state files.
