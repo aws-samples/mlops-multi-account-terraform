@@ -20,14 +20,14 @@ Environment=${Environment:-"dev"}
 read -r -p "Enter GitHub Org name [sagemaker-mlops-terraform]:" GITHUB_ORG
 GITHUB_ORG=${GITHUB_ORG:-"sagemaker-mlops-terraform"}
 
-read -r -p "Enter Role name [aws-github-oidc-role]:" ROLE_NAME
-ROLE_NAME=${ROLE_NAME:-"aws-github-oidc-role"}
-
 read -r -p "Enter TerraformStateBucketPrefix [terraform-state]:" TerraformStateBucketPrefix
 TerraformStateBucketPrefix=${TerraformStateBucketPrefix:-"terraform-state"}
 
 read -r -p "Enter TerraformStateLockTableName [terraform-state-locks]:" TerraformStateLockTableName
 TerraformStateLockTableName=${TerraformStateLockTableName:-"terraform-state-locks"}
+
+ROLE_NAME="aws-github-oidc-role"
+
 
 echo " "
 
@@ -70,25 +70,25 @@ echo "====================================================="
 echo " "
 
 echo "====================================================="
-echo "Creating S3 Bucket: terraform-state-dev-$AWS_REGION-$ACCOUNT_ID"
+echo "Creating S3 Bucket: $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID"
 aws s3api create-bucket \
-    --bucket terraform-state-dev-$AWS_REGION-$ACCOUNT_ID \
+    --bucket $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID \
     --acl private \
     --create-bucket-configuration LocationConstraint=$AWS_REGION \
     --output json
 echo "========= Setting bucket Encryption"
 aws s3api put-bucket-encryption \
-    --bucket terraform-state-dev-$AWS_REGION-$ACCOUNT_ID \
+    --bucket $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID \
     --server-side-encryption-configuration '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}' \
     --output json
 echo "========= Setting Public access block"
 aws s3api put-public-access-block \
-    --bucket terraform-state-dev-$AWS_REGION-$ACCOUNT_ID \
+    --bucket $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID \
     --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true \
     --output json
 echo "========= Enabling Bucket versioning"
 aws s3api put-bucket-versioning \
-    --bucket terraform-state-dev-$AWS_REGION-$ACCOUNT_ID \
+    --bucket $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID \
     --versioning-configuration Status=Enabled \
     --output json
 echo "========= Applying Bucket Policy"
@@ -101,22 +101,22 @@ cat > bucket_policy.json << EOL
                 "Effect": "Deny",
                 "Principal": "*",
                 "Action": "s3:DeleteObject",
-                "Resource": "arn:aws:s3:::terraform-state-dev-$AWS_REGION-$ACCOUNT_ID/*"
+                "Resource": "arn:aws:s3:::$TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID/*"
             }
         ]
     }
 EOL
 aws s3api put-bucket-policy \
-    --bucket terraform-state-dev-$AWS_REGION-$ACCOUNT_ID \
+    --bucket $TerraformStateBucketPrefix-$Environment-$AWS_REGION-$ACCOUNT_ID \
     --policy file://bucket_policy.json \
     --output json
 echo "====================================================="
 echo " "
 
 echo "====================================================="
-echo "Creating DynamoDB Table: terraform-state-locks-dev"
+echo "Creating DynamoDB Table: $TerraformStateLockTableName-$Environment"
 aws dynamodb create-table \
-    --table-name terraform-state-locks-dev \
+    --table-name $TerraformStateLockTableName-$Environment \
     --attribute-definitions AttributeName=LockID,AttributeType=S \
     --key-schema AttributeName=LockID,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
