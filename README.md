@@ -62,9 +62,11 @@ The instructions here assume the following prerequisites. Make a note of these d
 
 This section explains the steps required to bootstrap your accounts for GitHub and Terraform.
 
-> **_NOTE:_** You can skip directly to [CloudFormation template](#cloudformation-template-for-bootstrapping) section to avoid manual bootstrapping.
+> **_NOTE:_** You can skip directly to [CloudFormation template](#option-1-cloudformation-template-for-bootstrapping) section to avoid manual bootstrapping.  
+> **_NOTE:_** You can skip directly to [Bash Script](#option-2-bash-script-for-bootstrapping) section to avoid manual bootstrapping.
 
-#### GitHub Actions using OpenId Conenect
+
+#### GitHub Actions using OpenId Connect
 
 To avoid using long-term [AWS Identity and Access Management (IAM)](https://aws.amazon.com/iam/) user access keys, we can configure an [OpenID Connect (OIDC)](https://openid.net/connect/) identity provider (idP) inside an AWS account which allows the use of IAM roles and short-term credentials. Follow detailed instructions at [Use IAM roles to connect GitHub Actions to actions in AWS](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/) or use the CloudFormation template provided below.
 
@@ -80,9 +82,9 @@ Where,
 `Prefix`: Common name for resources. e.g. `mlops`
 `Environment`: dev or preprod or prod
 
-#### CloudFormation Template for bootstrapping
+#### (Option 1) CloudFormation Template for bootstrapping
 
-A [bootstrap.yaml](bootstrap.yaml) CloudFormation template has been provided. This can be deployed to each AWS account manually. Later, bootstrapping can be standardised and automated via [CloudFormation StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html) for an [AWS Organization](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudformation.html).
+A [bootstrap.yaml](bootstrap.yaml) CloudFormation template has been provided. This can be deployed to each AWS account. Later, bootstrapping can be standardised and automated via [CloudFormation StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html) for an [AWS Organization](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudformation.html).
 
 You can get started with one account but we recommend creating at least 3 AWS accounts: a dev, preprod, and prod account.
 
@@ -117,7 +119,23 @@ aws cloudformation create-stack \
                ParameterKey=TerraformStateLockTableName,ParameterValue=$TerraformStateLockTableName
 ```
 
-> **_NOTE:_**: if you change the TerraformStateBucketPrefix or TerraformStateLockTableName parameters, you must update the environment variables (`S3_PREFIX`, `DYNAMODB_PREFIX`) in the [deploy.yml](base-infrastructure/.github/workflows/deploy.yml) to match.
+#### (Option 2) Bash script for bootstrapping
+
+A [bootstrap.sh](bootstrap.sh) script has been provided. This can be run against each AWS account. 
+
+You can get started with one account but we recommend creating at least 3 AWS accounts: a dev, preprod, and prod account.
+
+1. Ensure AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [credentials are loaded](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for the target account that you want to bootstrap.
+
+2. Identify the following:
+  a. Environment Type of the account: `dev`, `preprod`, or `prod`
+  b. Name of your GitHub Organization
+  c. (Optional) Customize S3 bucket name for Terraform state files by choosing a prefix.
+  d. (Optional) Customize DynamoDB Table Name for State Locking.
+
+3. Run the script (`bash ./bootstrap.sh`) and input the details from step 2 when prompted. You can leave most of these options default.
+
+> **_NOTE:_** if you change the TerraformStateBucketPrefix or TerraformStateLockTableName parameters, you must update the environment variables (`S3_PREFIX`, `DYNAMODB_PREFIX`) in the [deploy.yml](base-infrastructure/.github/workflows/deploy.yml) to match.
 
 This one-time deployment creates the following resources in your AWS account:
 
@@ -133,7 +151,7 @@ Once this is deployed, you're ready to move on to the next step.
 
 We will move the code from this example to your GitHub Organization.
 
-1. [base-infrastructure](./base-infrastructure/): An internal reposotry for Base Infrastructure which wil contain all code from `./sagemaker-mlops-terraform` folder.
+1. [base-infrastructure](./base-infrastructure/): An internal repository for Base Infrastructure which wil contain all code from `./sagemaker-mlops-terraform` folder.
 2. [template-repos](./template-repos/): GitHub [template repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository) with code from `./template-repos/**`. Make sure to use the same name as the folder name.
 
 > **_Note_:** This is an important step to be able to deploy infrastructure. All further steps should be performed directly in your GitHub Organization.
