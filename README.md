@@ -1,4 +1,4 @@
-# SageMaker MLOps Multi Account Setup with GitHub and Terraform
+# Build an enterprise grade MLOps platfrom on AWS using Github and Terraform
 
 ## Introduction
 
