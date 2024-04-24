@@ -1,6 +1,6 @@
 # Template Repos
 
-The seed code for GitHub template repositories. Make sure you have a template for each of the 5 repos here in your GutHub Organization.
+The seed code for GitHub template repositories. Make sure you have a template for each of the 5 repos here in your GitHub Organization.
 
 <img src="../architecture/template-repos.png" alt="drawing" width="500"/>
 
@@ -13,4 +13,4 @@ Templates:
 5. [pipeline-promotion](./pipeline-promotion/)
 6. [llm-training](./llm-training/)
 
-> **_Note:_** Make sure to mark these repositories as a template on GitHub.
+> **_Note:_** Make sure to mark these repositories as a template on GitHub in the repository settings.
