@@ -24,7 +24,7 @@ Parameters:
   GitUser:
     Type: String
     Description: Git user to give admin over the project repositories
-  Inferece:
+  Inference:
     AllowedValues:
       - "real-time"
       - "batch"
@@ -40,10 +40,10 @@ Parameters:
     Description: Deploy repository for bring your own container
 Conditions:
   DeployRT: !Equals
-    - !Ref Inferece
+    - !Ref Inference
     - "real-time"
   DeployBatch: !Equals
-    - !Ref Inferece
+    - !Ref Inference
     - "batch"
   DeployBYOC: !Equals
     - !Ref BringYourOwnContainer
@@ -106,7 +106,7 @@ Resources:
       Targets:
         - Arn: "{{resolve:ssm:arn_trigger_workflow_lambda}}"
           Id: !Sub "sagemaker-${SageMakerProjectName}-model-deploy-lambda-trigger"
-          Input: !Sub '{"ORG_REPO_NAME":"{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inferece}"}'
+          Input: !Sub '{"ORG_REPO_NAME":"{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inference}"}'
 
   PermissionForEventsToInvokeLambda:
     Type: "AWS::Lambda::Permission"
@@ -203,7 +203,7 @@ Resources:
     Properties:
       GIT_USER: !Ref GitUser
       ORGANIZATION: "{{resolve:ssm:github_organization}}"
-      REPO_NAME: !Sub "mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inferece}"
+      REPO_NAME: !Sub "mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inference}"
       VAR_AWS_REGION: !Ref "AWS::Region"
       SECRET_AWS_PREPROD_ACCOUNT_NUMBER: !If
         - PreProdAccount
@@ -227,7 +227,7 @@ Resources:
     Properties:
       GIT_USER: !Ref GitUser
       ORGANIZATION: "{{resolve:ssm:github_organization}}"
-      REPO_NAME: !Sub "mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inferece}"
+      REPO_NAME: !Sub "mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inference}"
       VAR_AWS_REGION: !Ref "AWS::Region"
       SECRET_AWS_PREPROD_ACCOUNT_NUMBER: !If
         - PreProdAccount
@@ -286,10 +286,10 @@ Resources:
     Type: "AWS::SageMaker::CodeRepository"
     DependsOn: CustomResourceLambdaRepoDeployRT
     Properties:
-      CodeRepositoryName: !Sub "aws-mlops-${SageMakerProjectName}-model-deployment-${Inferece}"
+      CodeRepositoryName: !Sub "aws-mlops-${SageMakerProjectName}-model-deployment-${Inference}"
       GitConfig:
         Branch: main
-        RepositoryUrl: !Sub "https://github.com/{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inferece}.git"
+        RepositoryUrl: !Sub "https://github.com/{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inference}.git"
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
@@ -301,10 +301,10 @@ Resources:
     Type: "AWS::SageMaker::CodeRepository"
     DependsOn: CustomResourceLambdaRepoDeployBatch
     Properties:
-      CodeRepositoryName: !Sub "aws-mlops-${SageMakerProjectName}-model-deployment-${Inferece}"
+      CodeRepositoryName: !Sub "aws-mlops-${SageMakerProjectName}-model-deployment-${Inference}"
       GitConfig:
         Branch: main
-        RepositoryUrl: !Sub "https://github.com/{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inferece}.git"
+        RepositoryUrl: !Sub "https://github.com/{{resolve:ssm:github_organization}}/mlops-${SageMakerProjectName}-${SageMakerProjectId}-model-deployment-${Inference}.git"
       Tags:
         - Key: "sagemaker:project-id"
           Value: !Sub ${SageMakerProjectId}
