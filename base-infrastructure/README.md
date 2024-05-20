@@ -213,3 +213,5 @@ If you are interested to delete the multi-account infrastructure created by this
    bucket `ml-artifacts-<region>-<account-id>` and the model deployed via the pipeline
 5. Once the above changes are done, you can trigger the destroy infrastructure action
 6. In case all the resources are not deleted, you will need to manually delete the pending resources
+7. Delete the IAM user that you created for GitHub Actions.
+8. Delete the secret in AWS Secrets Manager that stores the GitHub personal access token.
