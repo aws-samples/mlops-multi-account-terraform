@@ -1,1 +1,15 @@
 .idea/
+*.egg-info
+.cache
+.coverage
+.tox
+__pycache__
+.sagemaker-code-config
+.DS_Store
+.terraform
+.vscode
+*.tfstate
+*.tfstate.backup
+*terraform.tfstate*
+*.out
+.terraform.lock.hcl
