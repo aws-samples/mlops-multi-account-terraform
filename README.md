@@ -170,3 +170,13 @@ The team who created the repo:
 - Jordan Grubb <jmgrubb@amazon.co.uk> 
 - Anirudh Gangwal <angangwa@amazon.co.uk>
 - Irene Arroyo Delgado <iiarroyo@amazon.es>
+
+## AWS MLOps accelerators
+
+- Terraform and GitHub solution: https://github.com/aws-samples/mlops-multi-account-terraform
+- AWS CDK solution: https://github.com/aws-samples/aws-enterprise-mlops-framework
+- CloudFormation Solution: https://github.com/aws-samples/amazon-sagemaker-secure-mlops 
+- SageMaker Projects Examples: https://github.com/aws-samples/sagemaker-custom-project-templates
+  
+
+
