@@ -174,9 +174,7 @@ The team who created the repo:
 ## Other AWS MLOps accelerators
 
 - AWS CDK solution: https://github.com/aws-samples/aws-enterprise-mlops-framework
-![image](https://github.com/aws-samples/mlops-multi-account-terraform/assets/110913236/ac1f6d7f-54bb-4cd7-a9fa-5c041b7ab7b3)
 - CloudFormation Solution: https://github.com/aws-samples/amazon-sagemaker-secure-mlops 
-![image](https://github.com/aws-samples/mlops-multi-account-terraform/assets/110913236/149604c3-199f-46ba-ac7a-f9a458d662b5)
 - SageMaker Projects Examples: https://github.com/aws-samples/sagemaker-custom-project-templates
   
 
