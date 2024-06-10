@@ -171,7 +171,7 @@ The team who created the repo:
 - Anirudh Gangwal <angangwa@amazon.co.uk>
 - Irene Arroyo Delgado <iiarroyo@amazon.es>
 
-## Other AWS MLOps accelerators
+## AWS MLOps accelerators
 
 - AWS CDK solution: https://github.com/aws-samples/aws-enterprise-mlops-framework
 - CloudFormation Solution: https://github.com/aws-samples/amazon-sagemaker-secure-mlops 
