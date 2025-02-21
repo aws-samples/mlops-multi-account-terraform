@@ -1,0 +1,32 @@
+---
+name: Quality Checks
+on: 
+  pull_request: 
+    branches: 
+      - main
+    paths: 
+      - terraform/**
+  workflow_dispatch: 
+jobs:
+  checkov: 
+    name: Checkov
+    runs-on: ubuntu-latest
+    permissions: 
+      actions: read
+      contents: write
+      security-events: write
+      id-token: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: base-infrastructure/terraform/
+          framework: terraform 
+          quiet: true
