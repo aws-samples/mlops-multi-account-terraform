@@ -1,4 +1,4 @@
-# Build an enterprise grade MLOps platfrom on AWS using Github and Terraform
+# Build an enterprise grade MLOps platform on AWS using Github and Terraform
 
 ## Introduction
 
