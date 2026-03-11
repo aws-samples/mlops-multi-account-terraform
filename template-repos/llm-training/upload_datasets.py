@@ -47,7 +47,7 @@ if __name__ == "__main__":
     S3Uploader.upload("./datasets/template.json", validation_s3_location)
     fname = f"./{args.pipeline}/config.yaml"
     stream = open(fname, "r")
-    data = yaml.load(stream, Loader=yaml.Loader)
+    data = yaml.safe_load(stream)
     data["SageMaker"]["PythonSDK"]["Modules"]["RemoteFunction"]["RoleArn"] = args.role
     with open(fname, "w") as yaml_file:
         yaml_file.write(yaml.dump(data, default_flow_style=False))
